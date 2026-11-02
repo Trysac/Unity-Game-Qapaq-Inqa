@@ -312,5 +312,44 @@ namespace QapaqInqa.Core.Tests
             Play(stage, InputFrame.None, 60);
             Assert.That(stage.Elapsed, Is.EqualTo(1f + Sim.Dt).Within(0.001f));
         }
+
+        static string[] BossCourt() => new[]
+        {
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            " P   A           B        E     ",
+            "################################",
+        };
+
+        [Test]
+        public void ADefeatedBossStaysDefeatedAfterARespawn()
+        {
+            Stage stage = Make(BossCourt());
+            stage.Strike(stage.Boss, Tuning.BossHealth);
+            int pointsAfterKill = stage.Points;
+            stage.Health.Kill();
+            Play(stage, InputFrame.None, 1);
+            stage.Respawn();
+            Assert.That(stage.Boss.Alive, Is.False, "the defeated boss must not come back");
+            stage.Strike(stage.Boss, Tuning.BossHealth);
+            Assert.That(stage.Points, Is.EqualTo(pointsAfterKill), "the boss points are paid once");
+        }
+
+        [Test]
+        public void TheLastIdolOpensTheGateWhenTheBossFellBeforeARespawn()
+        {
+            Stage stage = Make(BossCourt());
+            stage.Strike(stage.Boss, Tuning.BossHealth);
+            stage.Health.Kill();
+            Play(stage, InputFrame.None, 1);
+            stage.Respawn();
+            stage.PlacePlayer(new Vec2(5.5f, 1f));
+            Play(stage, InputFrame.None, 2);
+            Assert.That(stage.ArtifactsFound, Is.EqualTo(stage.ArtifactsTotal));
+            Assert.That(stage.GateOpen, Is.True);
+        }
     }
 }

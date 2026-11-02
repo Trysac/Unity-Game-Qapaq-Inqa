@@ -197,8 +197,8 @@ namespace QapaqInqa.Core
 
         /// <summary>
         /// Puts the player back at the last checkpoint with full hearts. Pickups already taken stay
-        /// taken (and their points stay earned), defeated enemies stay down, and the boss goes back
-        /// to sleep at full health.
+        /// taken (and their points stay earned), defeated enemies stay down, and a boss still standing
+        /// goes back to sleep at full health.
         /// </summary>
         public void Respawn()
         {
@@ -206,7 +206,7 @@ namespace QapaqInqa.Core
             Health.Restore();
             arrows.Clear();
             rocks.Clear();
-            Boss?.Reset();
+            if (Boss != null && Boss.Alive) Boss.Reset();
             Phase = StagePhase.Playing;
             PhaseTime = 0f;
         }
