@@ -94,10 +94,10 @@ namespace QapaqInqa.Core
             Load(LevelIndex + 1);
         }
 
-        /// <summary>Restarts the current level from its start, keeping the score banked before it. Costs nothing.</summary>
+        /// <summary>Restarts the current level from its start, keeping the score banked before it. Costs nothing, but is ignored during the death beat so it cannot dodge a lost life.</summary>
         public void RestartLevel()
         {
-            if (Phase != RunPhase.Playing) return;
+            if (Phase != RunPhase.Playing || Stage.Phase == StagePhase.Dying) return;
             Load(LevelIndex);
         }
 

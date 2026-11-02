@@ -93,7 +93,7 @@ Unity -batchmode -quit -projectPath . -executeMethod QapaqInqa.EditorTools.Proje
   against a tile grid, one-way ledges that only hold from above, ladders whose top rung is
   also a ledge, acceleration, variable jump height, coyote time, jump buffering and knockback.
   Enemies, the boss's state machine, pickups, checkpoints, the gate, lives, score, records and
-  settings live there too, covered by 59 EditMode tests, including a coarse reachability
+  settings live there too, covered by 62 EditMode tests, including a coarse reachability
   search that proves every idol, checkpoint and gate in the four maps can be reached.
 - **Levels are text.** Each trial is a grid of characters (`#` stone, `=` ledge, `H` ladder,
   `A` idol, `B` the boss...). The view bakes the whole map into one texture at load, picking

@@ -152,5 +152,17 @@ namespace QapaqInqa.Core.Tests
                 Assert.That(new Stage(new LevelMap(Levels.All[i].Map)).Boss, Is.Null);
             }
         }
+
+        [Test]
+        public void RestartingWhileDyingStillCostsTheLife()
+        {
+            var run = new Run(records, TwoLevels());
+            run.Stage.Health.Kill();
+            run.Tick(InputFrame.None, Sim.Dt);
+            run.RestartLevel();
+            Assert.That(run.Stage.Phase, Is.EqualTo(StagePhase.Dying), "a restart is ignored during the death beat");
+            for (int i = 0; i < Sim.Seconds(Tuning.DyingTime) + 2; i++) run.Tick(InputFrame.None, Sim.Dt);
+            Assert.That(run.Lives, Is.EqualTo(Tuning.StartingLives - 1));
+        }
     }
 }
