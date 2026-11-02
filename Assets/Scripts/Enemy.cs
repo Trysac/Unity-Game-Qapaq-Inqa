@@ -25,11 +25,11 @@ public class Enemy : MonoBehaviour
 
         if (IsFacingRight())
         {
-            myRigidBody.velocity = new Vector2(moveSpeed, 0f);
+            myRigidBody.linearVelocity = new Vector2(moveSpeed, 0f);
         }
         else
         {
-            myRigidBody.velocity = new Vector2(-moveSpeed, 0f);
+            myRigidBody.linearVelocity = new Vector2(-moveSpeed, 0f);
         }
     }
 
@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
     {
         if (!collision.gameObject.CompareTag("Arrow"))
         {
-            this.transform.localScale = new Vector2(-(Mathf.Sign(myRigidBody.velocity.x)), 1f);
+            this.transform.localScale = new Vector2(-(Mathf.Sign(myRigidBody.linearVelocity.x)), 1f);
         }
     }
 

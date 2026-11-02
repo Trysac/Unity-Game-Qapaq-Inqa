@@ -45,10 +45,10 @@ public class Player : MonoBehaviour
     private void Run()
     {
         float controlThrow = CrossPlatformInputManager.GetAxis("Horizontal");
-        Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, myRigidBody.velocity.y);
-        myRigidBody.velocity = playerVelocity;
+        Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, myRigidBody.linearVelocity.y);
+        myRigidBody.linearVelocity = playerVelocity;
 
-        bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.velocity.x) > Mathf.Epsilon;
+        bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.linearVelocity.x) > Mathf.Epsilon;
         myAnimator.SetBool("Running", playerHasHorizontalSpeed);
     }
 
@@ -62,11 +62,11 @@ public class Player : MonoBehaviour
         }
 
         float controlThrow = CrossPlatformInputManager.GetAxis("Vertical");
-        Vector2 climbVelocity = new Vector2(myRigidBody.velocity.x, controlThrow * climbSpeed);
-        myRigidBody.velocity = climbVelocity;
+        Vector2 climbVelocity = new Vector2(myRigidBody.linearVelocity.x, controlThrow * climbSpeed);
+        myRigidBody.linearVelocity = climbVelocity;
         myRigidBody.gravityScale = 0f;
 
-        bool playerHasVerticalSpeed = Mathf.Abs(myRigidBody.velocity.y) > Mathf.Epsilon;
+        bool playerHasVerticalSpeed = Mathf.Abs(myRigidBody.linearVelocity.y) > Mathf.Epsilon;
         myAnimator.SetBool("Climbing", playerHasVerticalSpeed);
 
     }
@@ -78,7 +78,7 @@ public class Player : MonoBehaviour
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
         {
             Vector2 jumpVelocityToAdd = new Vector2(0f, jumpSpeed);
-            myRigidBody.velocity += jumpVelocityToAdd;
+            myRigidBody.linearVelocity += jumpVelocityToAdd;
         }
     }
 
@@ -100,11 +100,11 @@ public class Player : MonoBehaviour
 
     private void FlipSprite()
     {
-        bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.velocity.x) > Mathf.Epsilon;
+        bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.linearVelocity.x) > Mathf.Epsilon;
         if (playerHasHorizontalSpeed)
         {
-            transform.localScale = new Vector2(Mathf.Sign(myRigidBody.velocity.x), 1f);
-            shootSide = Mathf.Sign(myRigidBody.velocity.x);
+            transform.localScale = new Vector2(Mathf.Sign(myRigidBody.linearVelocity.x), 1f);
+            shootSide = Mathf.Sign(myRigidBody.linearVelocity.x);
         }
     }
 
