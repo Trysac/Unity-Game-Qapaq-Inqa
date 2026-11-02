@@ -211,6 +211,9 @@ namespace QapaqInqa.Core
             PhaseTime = 0f;
         }
 
+        /// <summary>For tests and tools: damages an enemy exactly as an arrow hit would.</summary>
+        public void Strike(Enemy enemy, int damage) => Damage(enemy, damage, new Vec2(enemy.X, enemy.Y + enemy.Height / 2f));
+
         /// <summary>For tests and tools: puts the player's feet somewhere.</summary>
         public void PlacePlayer(Vec2 feet) => Player.Respawn(feet);
 

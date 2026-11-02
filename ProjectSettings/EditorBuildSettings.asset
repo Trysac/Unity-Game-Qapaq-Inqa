@@ -4,5 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/QapaqInqa.unity
+    guid: 5d2ca39b41b705a46a982163e2cc5390
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0
