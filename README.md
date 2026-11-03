@@ -12,6 +12,16 @@ golden idols that open each Sun Gate, and face the Stone Puma that guards the la
 | ![The Qhapaq Ñan, a mountain road of rope bridges](docs/screenshots/mountain.png) | ![The Caves of Pacaritambo](docs/screenshots/cave.png) |
 | ![A trial's intro card with its codex page](docs/screenshots/intro.png) | ![Results of a cleared trial with time bonus and best time](docs/screenshots/complete.png) |
 
+## Play it
+
+- **In your browser:** [trysac.github.io/Unity-Game-Qapaq-Inqa](https://trysac.github.io/Unity-Game-Qapaq-Inqa/)
+- **On itch.io:** [trysac.itch.io/qapaq-inqa](https://trysac.itch.io/qapaq-inqa)
+- **Get the code:** fork this repository, or clone it:
+
+  ```bash
+  git clone https://github.com/Trysac/Unity-Game-Qapaq-Inqa.git
+  ```
+
 ## Run it
 
 1. Install **Unity 6000.3.27f1 (Unity 6 LTS)** with Unity Hub (add the Windows or Web build
