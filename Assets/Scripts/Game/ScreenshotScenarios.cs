@@ -12,6 +12,8 @@ namespace QapaqInqa.Game
     /// Without the -screenshot argument nothing is created, so normal runs and WebGL builds are
     /// unaffected. Inside the editor (ProjectBuilder.CaptureScreenshots) the camera and the HUD are
     /// rendered off screen at 1280x720 and blended, for machines that cannot run the player.
+    /// Adding <c>-frames N [-fps F]</c> saves N numbered frames per scenario at a fixed timestep
+    /// of 1/F seconds instead of one still (the README gameplay GIF uses <c>-scenario gameplay</c>).
     /// </summary>
     public sealed class ScreenshotScenarios : MonoBehaviour
     {
@@ -21,6 +23,8 @@ namespace QapaqInqa.Game
 
         string folder;
         string[] scenarios;
+        int frames;
+        int fps = 15;
         RenderTexture sceneTarget;
         RenderTexture uiTarget;
 
@@ -32,6 +36,8 @@ namespace QapaqInqa.Game
             var host = new GameObject(nameof(ScreenshotScenarios)).AddComponent<ScreenshotScenarios>();
             host.folder = target;
             host.scenarios = (Argument("-scenario") ?? AllScenarios).Split(',');
+            int.TryParse(Argument("-frames"), out host.frames);
+            if (int.TryParse(Argument("-fps"), out int fps) && fps > 0) host.fps = fps;
         }
 
         IEnumerator Start()
@@ -49,6 +55,11 @@ namespace QapaqInqa.Game
                 string scenario = raw.Trim();
                 UnityEngine.Random.InitState(scenario.GetHashCode());
                 yield return Stage(director, scenario);
+                if (frames > 0)
+                {
+                    yield return CaptureSequence(director, scenario);
+                    continue;
+                }
                 Texture2D shot;
                 if (Application.isEditor)
                 {
@@ -108,6 +119,14 @@ namespace QapaqInqa.Game
                     yield return Act(director, new InputFrame(0.25f, 0f, false, false, true), 2.6f);
                     yield return Act(director, new InputFrame(-1f, 0f, true, true, true), 0.35f);
                     break;
+                case "gameplay":
+                    yield return Play(director, 3, new Vec2(60.5f, 3f));
+                    director.Run.Stage.Invincible = true;
+                    break;
+                case "valleyrun":
+                    yield return Play(director, 0, new Vec2(10.5f, 4f));
+                    director.Run.Stage.Invincible = true;
+                    break;
                 case "pause":
                     yield return Play(director, 0, new Vec2(58.5f, 8f));
                     yield return Act(director, InputFrame.None, 0.4f);
@@ -146,6 +165,50 @@ namespace QapaqInqa.Game
                     Debug.LogWarning($"Unknown screenshot scenario '{scenario}'.");
                     break;
             }
+        }
+
+        /// <summary>
+        /// Moves, jumps and shoots on a fixed script (moveX, jump at the start, fire, seconds) and
+        /// saves one frame every 1/fps seconds of game time, whatever the real frame rate is.
+        /// </summary>
+        IEnumerator CaptureSequence(GameDirector director, string scenario)
+        {
+            float[,] script = scenario == "valleyrun"
+                ? new float[,] { { 1f, 0f, 0f, 0.6f }, { 1f, 1f, 1f, 0.7f }, { 1f, 0f, 1f, 0.6f }, { 1f, 1f, 0f, 0.7f }, { 1f, 0f, 1f, 0.5f }, { 1f, 1f, 1f, 0.8f }, { 1f, 0f, 0f, 9f } }
+                : new float[,] { { 0.6f, 0f, 1f, 0.9f }, { 1f, 1f, 1f, 0.6f }, { 0.2f, 0f, 1f, 0.8f }, { -1f, 1f, 1f, 0.6f }, { -0.3f, 0f, 1f, 0.9f }, { 1f, 1f, 1f, 0.7f }, { 0.3f, 0f, 1f, 9f } };
+            Time.captureFramerate = fps;
+            int segment = -1;
+            float segmentEnd = 0f;
+            float t = 0f;
+            for (int i = 0; i < frames; i++)
+            {
+                bool started = false;
+                while (t >= segmentEnd && segment + 1 < script.GetLength(0))
+                {
+                    segment++;
+                    segmentEnd += script[segment, 3];
+                    started = true;
+                }
+                bool jump = script[segment, 1] > 0f;
+                director.ScriptedFrame = new InputFrame(script[segment, 0], 0f, jump && started, jump, script[segment, 2] > 0f);
+                t += 1f / fps;
+                Texture2D shot;
+                if (Application.isEditor)
+                {
+                    yield return null;
+                    shot = CaptureOffscreen();
+                }
+                else
+                {
+                    yield return new WaitForEndOfFrame();
+                    shot = ScreenCapture.CaptureScreenshotAsTexture();
+                }
+                File.WriteAllBytes(Path.Combine(folder, $"{scenario}_{i:D4}.png"), shot.EncodeToPNG());
+                Destroy(shot);
+            }
+            Time.captureFramerate = 0;
+            director.ScriptedFrame = InputFrame.None;
+            Debug.Log($"Saved {frames} frames of {scenario} at {fps} fps");
         }
 
         static IEnumerator Play(GameDirector director, int level, Vec2 feet)
