@@ -4,6 +4,8 @@ A 2D pixel-art platformer built with Unity about the Inca. As a young candidate 
 Sapa Inca, run, climb and shoot your bow through four trials of the sun god Inti, find the
 golden idols that open each Sun Gate, and face the Stone Puma that guards the last one.
 
+![Gameplay](docs/media/gameplay.gif)
+
 ![Fighting the Stone Puma in the Gate of Inti](docs/screenshots/boss.png)
 
 | | |
